@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.2
+
+- Fixed: requests right after a status notification were still refused now and then. The
+  player does not accept the controller's acknowledgement of a notification and repeats
+  the notification anyway, and the reply could make it refuse the next request.
+  Notifications are no longer acknowledged, as in other known BD-MP4K controllers; the
+  repeat is harmless, because unchanged values are ignored
+- Home Assistant no longer waits about 15 seconds at startup when the player is switched
+  off: the first poll makes a single attempt, like later polls of a player in standby
+
 ## 2.6.1
 
 - Fixed: status notifications were acknowledged too late for the player, which waits only

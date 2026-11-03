@@ -71,8 +71,9 @@ async def test_setup_while_player_is_off(
     assert hass.states.get(MEDIA_PLAYER).state == STATE_OFF
     assert hass.states.get("sensor.tascam_bd_mp4k_disc_status").state == STATE_UNAVAILABLE
     assert hass.states.get("button.tascam_bd_mp4k_tray_open").state == STATE_UNAVAILABLE
-    # The first poll reconnects and retries once before giving up.
-    assert player.client.async_disconnect.await_count == 1
+    # The first poll tries once, so Home Assistant does not wait for a player that is off.
+    assert player.client.async_send.await_args_list == [call("!7?SST", retry=False)]
+    player.client.async_disconnect.assert_not_awaited()
 
     await _unload(hass, mock_config_entry)
 
@@ -80,7 +81,8 @@ async def test_setup_while_player_is_off(
 async def test_poll_recovers_after_one_failed_request(
     hass: HomeAssistant, player: FakePlayer, mock_config_entry: MockConfigEntry
 ) -> None:
-    """A dropped connection on the first request is retried before going offline."""
+    """A dropped connection on a running player is retried before going offline."""
+    await _setup(hass, mock_config_entry)
     attempts = 0
     send = player.client.async_send.side_effect
 
@@ -96,8 +98,12 @@ async def test_poll_recovers_after_one_failed_request(
         return await send(command)
 
     player.client.async_send.side_effect = fail_first_status_request
-    await _setup(hass, mock_config_entry)
+    player.client.async_disconnect.reset_mock()
+    await mock_config_entry.runtime_data.async_refresh()
+    await hass.async_block_till_done()
 
+    assert attempts == 1
+    player.client.async_disconnect.assert_awaited_once()
     assert hass.states.get(MEDIA_PLAYER).state == "playing"
     await _unload(hass, mock_config_entry)
 

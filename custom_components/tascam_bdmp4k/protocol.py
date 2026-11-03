@@ -11,9 +11,12 @@ Protocol notes (RS-232C/Ethernet spec v1.01):
 - The device replies ``ack`` (optionally followed by ``+`` and an answer
   such as ``!7SET0011230``) or ``nack``.
 - The interval between commands must be at least 30 ms.
-- The device pushes status notifications on state changes; the controller
-  must reply with ``ack`` within 30 ms, or the device sends the notification once
-  more (spec 4.4.3).
+- The device pushes status notifications on state changes. The spec asks the
+  controller to acknowledge them, but the player does not accept an ``ack`` from
+  the controller: it sends every notification once more regardless (spec 4.4.3),
+  and the stray reply can make it refuse the next request. Notifications are
+  therefore not acknowledged; the repeat is harmless, as unchanged values are
+  ignored.
 - Device messages have no end character, so a message counts as complete once the
   line has been quiet for a moment.
 - A message is at most 600 bytes, start and end character included.
@@ -43,9 +46,9 @@ BUSY = "@0BDERBUSY"
 COMMAND_INTERVAL = 0.03  # 30 ms minimum between commands (spec 4.3.6)
 RESPONSE_TIMEOUT = 1.0
 CONNECT_TIMEOUT = 5.0
-# A device message is complete after this much silence. It must stay well below the
-# 30 ms the player waits for the ack of a notification (spec 4.4.3).
-FLUSH_TIMEOUT = 0.01
+# A device message is complete after this much silence (device messages have no end
+# character).
+FLUSH_TIMEOUT = 0.05
 RETRY_DELAY = 0.5  # pause before retrying a failed command
 RETRY_ATTEMPTS = 2  # initial attempt plus one retry
 BUSY_DELAY = 0.1  # pause before resending a command the player was too busy for
@@ -323,11 +326,8 @@ class TascamClient:
             ):
                 pending.future.set_result(token)
                 return
-            # Unsolicited status notification: acknowledge it (spec 4.4.3). The ack
-            # counts as a transmission, so the next command keeps the 30 ms gap.
-            if self._writer is not None:
-                self._writer.write(f"{ACK}{CR}".encode("ascii"))
-                self._last_command = time.monotonic()
+            # Unsolicited status notification. Deliberately not acknowledged; see the
+            # protocol notes at the top of this module.
             _LOGGER.debug("Notification: %s", token)
             if self._notification_callback is not None:
                 self._notification_callback(token)

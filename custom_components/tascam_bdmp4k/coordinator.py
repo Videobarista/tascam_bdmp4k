@@ -176,12 +176,14 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
         # A player that was already unreachable is most likely in standby. Try it
         # once per poll instead of retrying, so Home Assistant does not keep
         # knocking on its door; it is still picked up at the next poll once it is on.
-        offline = self.data is not None and not self.data.available
+        # The first poll counts as well, so Home Assistant does not wait at startup
+        # for a player that is switched off.
+        offline = self.data is None or not self.data.available
         try:
             status = await self._query(REQ_STATUS, retry=not offline)
         except TascamConnectionError as err:
             if offline:
-                _LOGGER.debug("Device still unreachable: %s", err)
+                _LOGGER.debug("Device unreachable, no retry: %s", err)
                 state.available = False
                 return state
             # The player occasionally drops the connection; reconnect and

@@ -119,10 +119,8 @@ async def test_nack_raises(device: FakeDevice, client: TascamClient) -> None:
     assert device.received == ["!7?SRT"]
 
 
-async def test_notification_is_dispatched_and_acknowledged(
-    device: FakeDevice, client: TascamClient
-) -> None:
-    """A pushed status notification reaches the callback and is acknowledged."""
+async def test_notification_is_dispatched(device: FakeDevice, client: TascamClient) -> None:
+    """A pushed status notification reaches the callback, and nothing is sent back."""
     device.replies["!7PLY"] = b"ack"
     received: asyncio.Queue[str] = asyncio.Queue()
     client.set_notification_callback(received.put_nowait)
@@ -131,7 +129,8 @@ async def test_notification_is_dispatched_and_acknowledged(
     device.push(b"!7MSTTO")
     async with asyncio.timeout(2):
         assert await received.get() == "!7MSTTO"
-    await device.wait_for_received("ack")
+    # The player does not accept an ack from the controller, so none is sent.
+    assert device.received == ["!7PLY"]
 
 
 async def test_notification_mixed_with_answer(device: FakeDevice, client: TascamClient) -> None:
@@ -206,17 +205,18 @@ async def test_busy_twice_raises(
     assert issubclass(TascamBusyError, TascamNackError)
 
 
-def test_notification_ack_fits_the_players_window() -> None:
-    """Notifications are acknowledged fast enough, and the ack keeps the 30 ms gap."""
-    # The player waits 30 ms for the ack and otherwise sends the notification again.
-    assert protocol.FLUSH_TIMEOUT < 0.03
+def test_notification_is_not_acknowledged() -> None:
+    """A notification, and the player's repeat of it, reach the callback without a reply."""
     tascam = TascamClient("127.0.0.1", 9030)
     writer = MagicMock()
     tascam._writer = writer
+    received: list[str] = []
+    tascam.set_notification_callback(received.append)
 
     tascam._dispatch("!7SSTPL")
-    writer.write.assert_called_once_with(b"ack\r")
-    assert tascam._last_command > 0
+    tascam._dispatch("!7SSTPL")
+    writer.write.assert_not_called()
+    assert received == ["!7SSTPL", "!7SSTPL"]
 
 
 def test_all_commands_pass_the_guard() -> None:
