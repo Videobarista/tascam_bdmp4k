@@ -1,0 +1,12 @@
+*.log
+*.py[cod]
+.DS_Store
+.coverage
+.idea/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.vscode/
+__pycache__/
+htmlcov/
+venv/
