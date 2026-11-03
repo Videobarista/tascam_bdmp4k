@@ -85,6 +85,18 @@
       "return": {
         "name": "Menu return"
       },
+      "cursor_up": {
+        "name": "Arrow up"
+      },
+      "cursor_down": {
+        "name": "Arrow down"
+      },
+      "cursor_left": {
+        "name": "Arrow left"
+      },
+      "cursor_right": {
+        "name": "Arrow right"
+      },
       "top_menu": {
         "name": "Menu top (disc)"
       },

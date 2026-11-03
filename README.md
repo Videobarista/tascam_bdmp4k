@@ -29,6 +29,7 @@ All entities belong to one device, **Tascam BD-MP4K**.
 | Time elapsed / Time remaining | Sensor (duration, s) | Numeric, so they work in templates and statistics. Unknown when nothing plays. |
 | Current chapter / Current title | Sensor | Chapter (or file) and title (or CD track) number. |
 | Tray open / Tray close | Button | Disc tray. |
+| Arrow up / down / left / right | Button | Move the cursor in menus. |
 | Menu home, enter, return, top (disc), popup, setup | Button | Menu navigation. |
 | Display info, Subtitle next | Button | On-screen info, next subtitle language. |
 | Mute on / Mute off | Button | Audio mute. |

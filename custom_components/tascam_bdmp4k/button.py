@@ -13,6 +13,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    CMD_CURSOR_DOWN,
+    CMD_CURSOR_LEFT,
+    CMD_CURSOR_RIGHT,
+    CMD_CURSOR_UP,
     CMD_DISPLAY,
     CMD_ENTER,
     CMD_HOME,
@@ -66,6 +70,26 @@ BUTTONS: tuple[TascamButtonDescription, ...] = (
         key="return",
         translation_key="return",
         command=CMD_RETURN,
+    ),
+    TascamButtonDescription(
+        key="cursor_up",
+        translation_key="cursor_up",
+        command=CMD_CURSOR_UP,
+    ),
+    TascamButtonDescription(
+        key="cursor_down",
+        translation_key="cursor_down",
+        command=CMD_CURSOR_DOWN,
+    ),
+    TascamButtonDescription(
+        key="cursor_left",
+        translation_key="cursor_left",
+        command=CMD_CURSOR_LEFT,
+    ),
+    TascamButtonDescription(
+        key="cursor_right",
+        translation_key="cursor_right",
+        command=CMD_CURSOR_RIGHT,
     ),
     TascamButtonDescription(
         key="top_menu",

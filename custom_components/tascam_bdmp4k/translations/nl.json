@@ -85,6 +85,18 @@
       "return": {
         "name": "Menu terug"
       },
+      "cursor_up": {
+        "name": "Pijl omhoog"
+      },
+      "cursor_down": {
+        "name": "Pijl omlaag"
+      },
+      "cursor_left": {
+        "name": "Pijl links"
+      },
+      "cursor_right": {
+        "name": "Pijl rechts"
+      },
       "top_menu": {
         "name": "Menu top (disc)"
       },

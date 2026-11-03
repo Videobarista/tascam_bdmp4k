@@ -111,6 +111,10 @@ async def test_turn_on_not_offered_without_mac(
     ("entity_id", "command"),
     [
         ("button.tascam_bd_mp4k_tray_open", "!7OPCOP"),
+        ("button.tascam_bd_mp4k_arrow_up", "!7OSD3"),
+        ("button.tascam_bd_mp4k_arrow_down", "!7OSD4"),
+        ("button.tascam_bd_mp4k_arrow_left", "!7OSD1"),
+        ("button.tascam_bd_mp4k_arrow_right", "!7OSD2"),
         ("button.tascam_bd_mp4k_tray_close", "!7OPCCL"),
         ("button.tascam_bd_mp4k_menu_home", "!7HOM"),
         ("button.tascam_bd_mp4k_mute_on", "!7MUT00"),

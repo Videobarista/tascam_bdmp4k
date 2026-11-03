@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.0
+
+- Added arrow buttons (up, down, left, right) to move the cursor in the player's menus
+
 ## 2.5.0
 
 Security hardening, and a fresh start of the repository under Videobarista.
