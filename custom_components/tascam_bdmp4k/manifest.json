@@ -1,0 +1,12 @@
+{
+  "domain": "tascam_bdmp4k",
+  "name": "Tascam BD-MP4K",
+  "codeowners": ["@Videobarista"],
+  "config_flow": true,
+  "documentation": "https://github.com/Videobarista/tascam_bdmp4k",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Videobarista/tascam_bdmp4k/issues",
+  "requirements": [],
+  "version": "2.5.0"
+}

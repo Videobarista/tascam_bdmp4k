@@ -1,0 +1,114 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tascam BD-MP4K instellen",
+        "description": "Voer het netwerkadres van je Tascam BD-MP4K Blu-ray-speler in.",
+        "data": {
+          "host": "Host",
+          "port": "Poort",
+          "mac": "MAC-adres (optioneel)"
+        },
+        "data_description": {
+          "host": "IP-adres of hostnaam van de speler.",
+          "port": "TCP-besturingspoort. De speler gebruikt altijd 9030.",
+          "mac": "Nodig om de speler met Wake-on-LAN in te schakelen, bijvoorbeeld aa:bb:cc:dd:ee:ff. Zet ook netwerk-stand-by aan op de speler zelf."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbinden mislukt",
+      "invalid_host": "Voer een IP-adres of hostnaam in, zonder http:// of spaties",
+      "invalid_port": "De poort moet tussen 1 en 65535 liggen",
+      "invalid_mac": "Ongeldig MAC-adres",
+      "unknown": "Onverwachte fout"
+    },
+    "abort": {
+      "already_configured": "Apparaat is al geconfigureerd"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "disc_status": {
+        "name": "Discstatus",
+        "state": {
+          "no_disc": "Geen disc",
+          "disc_present": "Disc aanwezig",
+          "unformatted": "Onbekende disc",
+          "tray_open": "Lade open",
+          "tray_closed": "Lade gesloten",
+          "tray_error": "Ladefout"
+        }
+      },
+      "playback_status": {
+        "name": "Afspeelstatus",
+        "state": {
+          "playing": "Afspelen",
+          "stopped": "Gestopt",
+          "paused": "Gepauzeerd",
+          "slow_reverse": "Langzaam achteruit",
+          "slow_forward": "Langzaam vooruit",
+          "search_reverse": "Zoeken achteruit",
+          "search_forward": "Zoeken vooruit",
+          "setup": "Instellingenmenu",
+          "media_center": "Mediacenter",
+          "track_menu": "Trackmenu",
+          "home_menu": "Hoofdmenu"
+        }
+      },
+      "elapsed_time": {
+        "name": "Tijd verstreken"
+      },
+      "remaining_time": {
+        "name": "Tijd resterend"
+      },
+      "current_chapter": {
+        "name": "Huidig hoofdstuk"
+      },
+      "current_title": {
+        "name": "Huidige titel"
+      }
+    },
+    "button": {
+      "tray_open": {
+        "name": "Lade openen"
+      },
+      "tray_close": {
+        "name": "Lade sluiten"
+      },
+      "home": {
+        "name": "Menu home"
+      },
+      "enter": {
+        "name": "Menu enter"
+      },
+      "return": {
+        "name": "Menu terug"
+      },
+      "top_menu": {
+        "name": "Menu top (disc)"
+      },
+      "popup_menu": {
+        "name": "Menu pop-up"
+      },
+      "setup_menu": {
+        "name": "Menu instellingen"
+      },
+      "display_info": {
+        "name": "Info weergeven"
+      },
+      "subtitle_next": {
+        "name": "Ondertiteling volgende"
+      },
+      "mute_on": {
+        "name": "Dempen aan"
+      },
+      "mute_off": {
+        "name": "Dempen uit"
+      },
+      "power_off": {
+        "name": "Uitschakelen (stand-by)"
+      }
+    }
+  }
+}

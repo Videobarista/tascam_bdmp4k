@@ -1,0 +1,52 @@
+# Status against the Home Assistant integration quality scale.
+# https://developers.home-assistant.io/docs/core/integration-quality-scale/
+#
+# Custom integrations are not graded by Home Assistant; this file records how the
+# integration aligns with the Bronze tier. Higher tiers are not claimed.
+rules:
+  # Bronze
+  action-setup:
+    status: exempt
+    comment: The integration provides no service actions.
+  appropriate-polling:
+    status: done
+    comment: >-
+      Transport and disc changes are pushed by the player; a 10 second poll is the
+      fallback and reads the elapsed and remaining time, which the player does not push.
+  brands:
+    status: done
+    comment: Icon and logo are in home-assistant/brands (custom_integrations/tascam_bdmp4k).
+  common-modules: done
+  config-flow-test-coverage: done
+  config-flow: done
+  dependency-transparency:
+    status: done
+    comment: No external requirements; the protocol client is part of the integration.
+  docs-actions:
+    status: exempt
+    comment: The integration provides no service actions.
+  docs-conditions:
+    status: exempt
+    comment: The integration provides no conditions.
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  docs-triggers:
+    status: exempt
+    comment: The integration provides no triggers.
+  entity-event-setup:
+    status: exempt
+    comment: >-
+      Entities do not subscribe to events; push notifications are handled by the
+      coordinator and reach the entities as coordinator updates.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup:
+    status: exempt
+    comment: >-
+      The player drops off the network in standby. Setup therefore always succeeds and
+      an unreachable player shows as off, so it can still be switched on with
+      Wake-on-LAN, instead of failing setup and retrying.
+  unique-config-entry: done

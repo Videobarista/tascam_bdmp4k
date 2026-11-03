@@ -1,0 +1,23 @@
+# Ruff configuration (lint + format), in line with Home Assistant core style.
+target-version = "py313"
+line-length = 100
+
+[lint]
+select = [
+  "B",   # flake8-bugbear
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "S",   # flake8-bandit (security)
+  "UP",  # pyupgrade
+  "W",   # pycodestyle warnings
+]
+
+[lint.per-file-ignores]
+# pytest uses plain asserts.
+"tests/**" = ["S101"]
+
+[lint.isort]
+force-sort-within-sections = true
+known-first-party = ["homeassistant"]
+combine-as-imports = true

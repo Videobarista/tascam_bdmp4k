@@ -1,0 +1,27 @@
+{
+  "entity": {
+    "button": {
+      "tray_open": {"default": "mdi:eject"},
+      "tray_close": {"default": "mdi:tray-arrow-down"},
+      "home": {"default": "mdi:home"},
+      "enter": {"default": "mdi:keyboard-return"},
+      "return": {"default": "mdi:arrow-left"},
+      "top_menu": {"default": "mdi:menu"},
+      "popup_menu": {"default": "mdi:dots-horizontal"},
+      "setup_menu": {"default": "mdi:cog"},
+      "display_info": {"default": "mdi:information-outline"},
+      "subtitle_next": {"default": "mdi:subtitles-outline"},
+      "mute_on": {"default": "mdi:volume-off"},
+      "mute_off": {"default": "mdi:volume-high"},
+      "power_off": {"default": "mdi:power"}
+    },
+    "sensor": {
+      "disc_status": {"default": "mdi:disc"},
+      "playback_status": {"default": "mdi:play-circle-outline"},
+      "elapsed_time": {"default": "mdi:timer-outline"},
+      "remaining_time": {"default": "mdi:timer-sand"},
+      "current_chapter": {"default": "mdi:bookmark-outline"},
+      "current_title": {"default": "mdi:movie-outline"}
+    }
+  }
+}
