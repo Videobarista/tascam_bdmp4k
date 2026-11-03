@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a problem with the Tascam BD-MP4K integration
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Integration version
+      placeholder: "2.5.0"
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.10.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: >
+        Enable debug logging for custom_components.tascam_bdmp4k and paste
+        the relevant lines here.
+      render: text
+  - type: checkboxes
+    id: single_client
+    attributes:
+      label: Checks
+      options:
+        - label: >
+            No other control system (Companion, Crestron, etc.) is connected
+            to the player, which accepts only one client at a time.
