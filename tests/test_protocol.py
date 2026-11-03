@@ -206,6 +206,19 @@ async def test_busy_twice_raises(
     assert issubclass(TascamBusyError, TascamNackError)
 
 
+def test_notification_ack_fits_the_players_window() -> None:
+    """Notifications are acknowledged fast enough, and the ack keeps the 30 ms gap."""
+    # The player waits 30 ms for the ack and otherwise sends the notification again.
+    assert protocol.FLUSH_TIMEOUT < 0.03
+    tascam = TascamClient("127.0.0.1", 9030)
+    writer = MagicMock()
+    tascam._writer = writer
+
+    tascam._dispatch("!7SSTPL")
+    writer.write.assert_called_once_with(b"ack\r")
+    assert tascam._last_command > 0
+
+
 def test_all_commands_pass_the_guard() -> None:
     """Every command and request the integration defines is well formed."""
     commands = [value for name, value in vars(const).items() if name.startswith(("CMD_", "REQ_"))]

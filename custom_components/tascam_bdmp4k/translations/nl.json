@@ -37,7 +37,8 @@
           "unformatted": "Onbekende disc",
           "tray_open": "Lade open",
           "tray_closed": "Lade gesloten",
-          "tray_error": "Ladefout"
+          "tray_error": "Ladefout",
+          "loading": "Disc laden"
         }
       },
       "playback_status": {

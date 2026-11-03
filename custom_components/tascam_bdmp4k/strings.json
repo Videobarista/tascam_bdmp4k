@@ -37,7 +37,8 @@
           "unformatted": "Unknown disc",
           "tray_open": "Tray open",
           "tray_closed": "Tray closed",
-          "tray_error": "Tray error"
+          "tray_error": "Tray error",
+          "loading": "Loading disc"
         }
       },
       "playback_status": {

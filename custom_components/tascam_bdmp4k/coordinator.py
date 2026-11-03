@@ -62,6 +62,23 @@ def parse_number(value: str) -> int | None:
     return None
 
 
+# The specification gives the chapter and title as TNMxxxx and GNMxxxx, but the
+# player's firmware sends TNxxxx and GNMXxxxx. Both forms are accepted; the longer
+# prefix is tried first so "TNM0003" is not read as "TN" + "M0003".
+CHAPTER_PREFIXES = ("TNM", "TN")
+TITLE_PREFIXES = ("GNMX", "GNM")
+# Total chapter and title counts (TTN/TT, TGN/TGNX) are pushed too but not shown.
+TOTAL_PREFIXES = ("TT", "TGN")
+
+
+def strip_prefix(body: str, prefixes: tuple[str, ...]) -> str | None:
+    """Return the value after the first matching prefix, or None if none matches."""
+    for prefix in prefixes:
+        if body.startswith(prefix):
+            return body[len(prefix) :]
+    return None
+
+
 class TascamCoordinator(DataUpdateCoordinator[TascamState]):
     """Poll the BD-MP4K and apply its pushed status notifications."""
 
@@ -117,6 +134,22 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
             state.disc_status = disc
             state.available = True
             self.async_set_updated_data(state)
+        elif (value := strip_prefix(body, CHAPTER_PREFIXES)) is not None:
+            chapter = parse_number(value)
+            if state.available and chapter == state.current_chapter:
+                return
+            state.current_chapter = chapter
+            state.available = True
+            self.async_set_updated_data(state)
+        elif (value := strip_prefix(body, TITLE_PREFIXES)) is not None:
+            title = parse_number(value)
+            if state.available and title == state.current_title:
+                return
+            state.current_title = title
+            state.available = True
+            self.async_set_updated_data(state)
+        elif strip_prefix(body, TOTAL_PREFIXES) is not None:
+            return
         else:
             # Refresh requests are debounced, so repeated notifications are cheap.
             self.hass.async_create_task(self.async_request_refresh())
@@ -138,6 +171,8 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
     async def _async_update_data(self) -> TascamState:
         """Fetch the current state from the device."""
         state = TascamState()
+        # What the last poll or notification showed, while the player was reachable.
+        previous = self.data if self.data is not None and self.data.available else None
         # A player that was already unreachable is most likely in standby. Try it
         # once per poll instead of retrying, so Home Assistant does not keep
         # knocking on its door; it is still picked up at the next poll once it is on.
@@ -166,6 +201,11 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
             state.playback_status = PLAYBACK_STATUS_MAP.get(code)
             if state.playback_status is None:
                 _LOGGER.debug("Unknown playback status code: %s", code)
+        elif previous is not None:
+            # Not answered, for example while the player is busy right after a
+            # notification: keep the last known status instead of showing unknown.
+            state.raw["status"] = previous.raw.get("status", "")
+            state.playback_status = previous.playback_status
 
         try:
             disc = await self._query(REQ_DISC)
@@ -175,6 +215,9 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
                 state.disc_status = DISC_STATUS_MAP.get(code)
                 if state.disc_status is None:
                     _LOGGER.debug("Unknown disc status code: %s", code)
+            elif previous is not None:
+                state.raw["disc"] = previous.raw.get("disc", "")
+                state.disc_status = previous.disc_status
 
             if state.playback_status in ("playing", "paused"):
                 elapsed = await self._query(REQ_ELAPSED)
@@ -188,14 +231,16 @@ class TascamCoordinator(DataUpdateCoordinator[TascamState]):
                     state.remaining = parse_hms(value)
 
                 chapter = await self._query(REQ_CURRENT_CHAPTER)
-                if chapter is not None and chapter.startswith("TNM"):
-                    value = chapter.removeprefix("TNM")
-                    state.current_chapter = parse_number(value)
+                if chapter is not None:
+                    value = strip_prefix(chapter, CHAPTER_PREFIXES)
+                    if value is not None:
+                        state.current_chapter = parse_number(value)
 
                 title = await self._query(REQ_CURRENT_TITLE)
-                if title is not None and title.startswith("GNM"):
-                    value = title.removeprefix("GNM")
-                    state.current_title = parse_number(value)
+                if title is not None:
+                    value = strip_prefix(title, TITLE_PREFIXES)
+                    if value is not None:
+                        state.current_title = parse_number(value)
         except TascamConnectionError as err:
             _LOGGER.debug("Lost connection during poll: %s", err)
 

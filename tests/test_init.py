@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import call, patch
+from unittest.mock import AsyncMock, call, patch
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -234,5 +234,61 @@ async def test_unchanged_notifications_are_ignored(
         player.notify("!7SSTPP")
         set_data.assert_called_once()
     await hass.async_block_till_done()
+
+    await _unload(hass, mock_config_entry)
+
+
+async def test_unanswered_status_keeps_last_known(
+    hass: HomeAssistant, player: FakePlayer, mock_config_entry: MockConfigEntry
+) -> None:
+    """A status request the player does not answer keeps the last known values."""
+    await _setup(hass, mock_config_entry)
+    del player.answers["!7?SST"]
+    del player.answers["!7?MST"]
+
+    await mock_config_entry.runtime_data.async_refresh()
+    await hass.async_block_till_done()
+    assert hass.states.get(MEDIA_PLAYER).state == "playing"
+    assert hass.states.get("sensor.tascam_bd_mp4k_disc_status").state == "disc_present"
+    assert hass.states.get("sensor.tascam_bd_mp4k_time_elapsed").state == "4350"
+
+    await _unload(hass, mock_config_entry)
+
+
+async def test_firmware_chapter_and_title_format(
+    hass: HomeAssistant, player: FakePlayer, mock_config_entry: MockConfigEntry
+) -> None:
+    """Chapter and title are read in the form the player actually sends."""
+    player.answers["!7?STC"] = "!7TN0004"
+    player.answers["!7?SGN"] = "!7GNMX0002"
+    await _setup(hass, mock_config_entry)
+
+    assert hass.states.get("sensor.tascam_bd_mp4k_current_chapter").state == "4"
+    assert hass.states.get("sensor.tascam_bd_mp4k_current_title").state == "2"
+
+    await _unload(hass, mock_config_entry)
+
+
+async def test_push_chapter_title_and_disc(
+    hass: HomeAssistant, player: FakePlayer, mock_config_entry: MockConfigEntry
+) -> None:
+    """Chapter, title and disc notifications update the sensors without a poll."""
+    await _setup(hass, mock_config_entry)
+    coordinator = mock_config_entry.runtime_data
+    assert player.notify is not None
+
+    with patch.object(coordinator, "async_request_refresh", new=AsyncMock()) as refresh:
+        player.notify("!7TN0005")
+        player.notify("!7GNMXUNKN")
+        player.notify("!7MSTLD")
+        # Total chapter and title counts are not shown and need no refresh.
+        player.notify("!7TT0002")
+        player.notify("!7TGNX0012")
+        await hass.async_block_till_done()
+        refresh.assert_not_called()
+
+    assert hass.states.get("sensor.tascam_bd_mp4k_current_chapter").state == "5"
+    assert hass.states.get("sensor.tascam_bd_mp4k_current_title").state == STATE_UNKNOWN
+    assert hass.states.get("sensor.tascam_bd_mp4k_disc_status").state == "loading"
 
     await _unload(hass, mock_config_entry)

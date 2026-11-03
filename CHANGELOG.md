@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.6.1
+
+- Fixed: status notifications were acknowledged too late for the player, which waits only
+  30 ms, so it sent every notification twice and sometimes refused the next request;
+  notifications are now acknowledged within about 10 ms and the ack keeps the 30 ms gap
+- Fixed: right after a play or pause change the status could show unknown until the next
+  poll; a status request the player does not answer now keeps the last known value
+- Fixed: current chapter and title could stay unknown, because the player sends them as
+  TNxxxx and GNMXxxxx instead of the documented TNMxxxx and GNMxxxx; both forms are read
+  now, and chapter and title notifications update the sensors straight away
+- Added: disc status "Loading disc", which the player reports while it loads a disc
+
 ## 2.6.0
 
 - Added arrow buttons (up, down, left, right) to move the cursor in the player's menus

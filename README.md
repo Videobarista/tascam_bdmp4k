@@ -24,7 +24,7 @@ All entities belong to one device, **Tascam BD-MP4K**.
 | Entity | Type | Description |
 |---|---|---|
 | Tascam BD-MP4K | Media player | Play, pause, stop, next/previous chapter, standby, and power on via Wake-on-LAN when a MAC address is set. Shows the position and the duration (elapsed + remaining time). Shows **off** when the player is in standby or unreachable. |
-| Disc status | Sensor (enum) | No disc, disc present, unknown disc, tray open, tray closed, tray error. |
+| Disc status | Sensor (enum) | No disc, disc present, loading disc, unknown disc, tray open, tray closed, tray error. |
 | Playback status | Sensor (enum) | Playing, paused, stopped, slow or search forward/reverse, and the menus. |
 | Time elapsed / Time remaining | Sensor (duration, s) | Numeric, so they work in templates and statistics. Unknown when nothing plays. |
 | Current chapter / Current title | Sensor | Chapter (or file) and title (or CD track) number. |

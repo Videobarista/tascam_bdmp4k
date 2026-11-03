@@ -59,6 +59,7 @@ DISC_STATUS_MAP = {
     "TO": "tray_open",
     "TC": "tray_closed",
     "TE": "tray_error",
+    "LD": "loading",  # sent by the player while it loads a disc; not in the spec
 }
 
 PLAYBACK_STATUS_MAP = {
