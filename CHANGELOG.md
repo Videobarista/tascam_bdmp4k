@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.6.3
+
+- Added: a **Local only** check and badge. `scripts/check_local_only.py` verifies in CI that
+  the integration can only reach the configured player (plus the local Wake-on-LAN
+  broadcast), and a new test records every connection during the config flow, setup,
+  polling and commands against a fake player
+- Added: an **IoT class** badge, read from the manifest
+- No functional changes
+
 ## 2.6.2
 
 - Fixed: requests right after a status notification were still refused now and then. The

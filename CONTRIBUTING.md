@@ -19,13 +19,14 @@ is usually enough to diagnose an issue.
 
 ## Checks
 
-Every push and pull request runs Ruff, the tests, hassfest, HACS validation and CodeQL.
-To run Ruff and the tests locally (Python 3.14):
+Every push and pull request runs Ruff, the tests, the local-only check, hassfest, HACS
+validation and CodeQL. To run them locally (Python 3.14):
 
 ```bash
 pip install ruff==0.16.8 -r requirements_test.txt
 ruff check .
 ruff format --check .
+python3 scripts/check_local_only.py
 pytest --cov --cov-report=term-missing
 ```
 
@@ -33,6 +34,11 @@ Ruff is configured in `ruff.toml`, in line with Home Assistant core style, and i
 Bandit security rules (`S`). The tests use
 [pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component);
 the protocol tests talk to a fake player on 127.0.0.1, so no hardware is needed.
+
+The local-only check (`scripts/check_local_only.py`, standard library only) fails if the
+integration could reach anything other than the configured player. If a change really
+needs a new exception, add it to the settings block at the top of the script with an
+explanation; never loosen the rules in general.
 
 ## Protocol documentation
 

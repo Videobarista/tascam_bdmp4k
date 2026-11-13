@@ -7,6 +7,8 @@
 [![Tests](https://github.com/Videobarista/tascam_bdmp4k/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Videobarista/tascam_bdmp4k/actions/workflows/tests.yml)
 [![HACS custom](https://img.shields.io/badge/HACS-custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories)
 [![Quality scale: Bronze (aligned)](https://img.shields.io/badge/quality%20scale-bronze%20(aligned)-cd7f32.svg)](https://developers.home-assistant.io/docs/core/integration-quality-scale/)
+[![Local only](https://github.com/Videobarista/tascam_bdmp4k/actions/workflows/local-only.yml/badge.svg?branch=main)](https://github.com/Videobarista/tascam_bdmp4k/actions/workflows/local-only.yml)
+[![IoT class](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FVideobarista%2Ftascam_bdmp4k%2Fmain%2Fcustom_components%2Ftascam_bdmp4k%2Fmanifest.json&query=%24.iot_class&label=IoT%20class&color=41BDF5)](#local-only)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Release](https://img.shields.io/github/v/release/Videobarista/tascam_bdmp4k?display_name=tag)](https://github.com/Videobarista/tascam_bdmp4k/releases)
@@ -139,6 +141,32 @@ pytest --cov --cov-report=term-missing
 
 Code style is checked with [Ruff](https://docs.astral.sh/ruff/) (configuration in
 `ruff.toml`); see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Local only
+
+The integration only talks to your player, never to the internet or any other service:
+one TCP connection to the configured address and port (9030 by default). The single
+exception is Wake-on-LAN: with a MAC address set, power on sends one magic packet as a UDP
+broadcast to port 9 on the local network. It holds only the player's MAC address and does
+not leave your network segment.
+
+Two automated checks back the **Local only** badge:
+
+- `scripts/check_local_only.py` (the badge's workflow) reads the manifest and the code:
+  local IoT class, no cloud, MQTT or webhook, no Python packages, no HTTP, no listeners,
+  connections only from `protocol.py` and never to a fixed address, the broadcast only from
+  `wol.py`, and no hard-coded internet addresses. Every address comes from your
+  configuration.
+- The tests run the real protocol client against a fake player and record every connection
+  during the config flow, setup, polling and commands, and check that all of them go to the
+  configured address and port, and that Wake-on-LAN sends exactly one packet to the local
+  broadcast address. The tests can only reach 127.0.0.1, so anything else would fail.
+
+The **IoT class** badge shows the class declared in the manifest (`local_push`: the player
+pushes changes over the local network).
+
+This covers the integration itself; what Home Assistant does (for example its optional
+analytics) is up to your Home Assistant settings.
 
 ## Security
 
